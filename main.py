@@ -1,16 +1,16 @@
-# This is a sample Python script.
+import cv2
+import numpy as np
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+img_1 = cv2.imread('images/photo1.jpg')
+img_2 = cv2.imread('images/photo2.jpg')
+img_3 = cv2.imread('images/photo3.jpg')
+gray = cv2.cvtColor(img_3, cv2.COLOR_BGR2GRAY)
 
+faces  = cv2.CascadeClassifier('faces.xml')
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+results = faces.detectMultiScale(gray,scaleFactor=2.3,minNeighbors=2)
+for (x,y,w,h) in results:
+    cv2.rectangle(img_3,(x,y),(x+w,y+h),(0,255,0),2)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+cv2.imshow('Image', img_3)
+cv2.waitKey(0)
