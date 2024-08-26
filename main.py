@@ -1,16 +1,31 @@
 import cv2
-import numpy as np
 
-img_1 = cv2.imread('images/photo1.jpg')
-img_2 = cv2.imread('images/photo2.jpg')
-img_3 = cv2.imread('images/photo3.jpg')
-gray = cv2.cvtColor(img_3, cv2.COLOR_BGR2GRAY)
+body_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-faces  = cv2.CascadeClassifier('faces.xml')
+cap = cv2.VideoCapture(0)
 
-results = faces.detectMultiScale(gray,scaleFactor=2.3,minNeighbors=2)
-for (x,y,w,h) in results:
-    cv2.rectangle(img_3,(x,y),(x+w,y+h),(0,255,0),2)
+if not cap.isOpened():
+    print("Error: Could not open camera.")
+    exit()
 
-cv2.imshow('Image', img_3)
-cv2.waitKey(0)
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        print("Error: Could not read frame.")
+        break
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    bodies = body_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
+
+    for (x, y, w, h) in bodies:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    cv2.imshow('People Detection', frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
